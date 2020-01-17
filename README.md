@@ -7,7 +7,11 @@ We merge all the datasets and train a model.
 You should first clone the project by command
 >git clone https://github.com/JianyuanLin/Bert-Protein
 
-Then you need to download models and datasets from follow address:
+Then you need to download models and datasets from the address:
+>https://drive.google.com/open?id=1VSi-bdPpT0Z1ytmhVxbHGGjZDtQNLjm6
+
+or the address:
+
 >https://pan.baidu.com/s/1y2aNlHWiAckNkPVugpEwUA
 
 The password is nxy5
