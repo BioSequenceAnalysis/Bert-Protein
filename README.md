@@ -37,4 +37,6 @@ init_chechpoint is the model which is used to train.
  # Predict
 You can predict your proteins data by command
 >python ljy_predict_AMP.py f1 f2  
+
+
 f1 is the fasta format file contains your proteins data and f2 is the output file.
