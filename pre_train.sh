@@ -1,9 +1,9 @@
 python run_pretraining.py \
-	  --input_file=/home/ljy/data/record/all_protein_3kmer.tfrecord \
-	    --output_dir=/home/ljy/data/output/pretraining_output \
+	  --input_file=./pre_train_data/uniprot_data.tfrecord \
+	    --output_dir=./model/1kmer_model/ \
 	      --do_train=True \
 	        --do_eval=True \
-		  --bert_config_file=./bert_config.json \
+		  --bert_config_file=./bert_config_1.json \
 		      --train_batch_size=64 \
 		        --max_seq_length=128 \
 			  --max_predictions_per_seq=20 \
