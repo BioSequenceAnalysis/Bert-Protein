@@ -8,6 +8,9 @@ You should first clone the project by command
 >git clone https://github.com/JianyuanLin/Bert-Protein
 
 Then you need to download models and datasets from follow address:
+>https://pan.baidu.com/s/1y2aNlHWiAckNkPVugpEwUA
+
+The password is nxy5
  
 Then you should uzip these zips and put them on the root of the project.
  # Pre-training
