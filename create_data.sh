@@ -1,7 +1,7 @@
 python create_pretraining_data.py \
-	 --input_file=./uniprot_data/all_protein_3kmer.fasta \
-	    --output_file=./record/all_protein_3kmer.tfrecord \
-	    --vocab_file=./vocab/vocab.txt \
+	 --input_file=./pre_train_data/uniprot_data.txt \
+	    --output_file=./pre_train_data/uniprot_data.tfrecord \
+	    --vocab_file=./vocab/vocab_1kmer.txt \
 	        --do_lower_case=True \
 		  --max_seq_length=128 \
 		    --max_predictions_per_seq=20 \
