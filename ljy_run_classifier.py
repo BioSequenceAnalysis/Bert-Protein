@@ -49,55 +49,55 @@ def main():
     train_example_num = train_dict[data_name]   # 获取训练集样本数量
     test_example_num = test_dict[data_name]     # 获取测试集样本数量
     batch_size = 32                             # batch的大小，如果gpu显存不够，可以考虑减小一下，尽量2的批次
-    train_batch_num = math.ceil(train_example_num / batch_size)
-    test_batch_num = math.ceil(test_example_num / batch_size)
-    num_train_epochs = 50
-    warmup_proportion = 0.1
-    learning_rate = 2e-5
-    use_tpu = False
-    seq_length = 128
-    data_root = "./dataset/1kmer_tfrecord/all_data/"
-    vocab_file = "./vocab/vocab_1kmer.txt"
-    init_checkpoint = "./model/1kmer_model/model.ckpt"
-    bert_config = modeling.BertConfig.from_json_file("./bert_config_1.json")
+    train_batch_num = math.ceil(train_example_num / batch_size)     # 根据batch的大小计算出训练集的batch的数量
+    test_batch_num = math.ceil(test_example_num / batch_size)       # 计算出测试集的batch的数量
+    num_train_epochs = 50   # 训练的次数，代表过几遍训练集
+    warmup_proportion = 0.1 # 预热的训练比例，保持不变即可
+    learning_rate = 2e-5    # 学习率
+    use_tpu = False         # 无视好了
+    seq_length = 128        # 这边默认设定128，不需要更改
+    data_root = "./dataset/1kmer_tfrecord/all_data/"    # 根据实际调用的数据集来这里修改数据路径
+    vocab_file = "./vocab/vocab_1kmer.txt"              # 词典
+    init_checkpoint = "./model/1kmer_model/model.ckpt"  # 模型初始化检查点，记录了模型的权重
+    bert_config = modeling.BertConfig.from_json_file("./bert_config_1.json")    # 根据该文件可以配置模型的结构
 
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
-    config.gpu_options.per_process_gpu_memory_fraction = 0.75
-    input_file = data_root + "/train.tf_record"
+    config.gpu_options.per_process_gpu_memory_fraction = 0.75   # 这三行用来防止直接占用全GPU
+    input_file = data_root + "/train.tf_record"                 # 输入训练集，这个文件是采用ljy_tsv2record生成的
     tokenizer = tokenization.FullTokenizer(
         vocab_file=vocab_file, do_lower_case=True)
-    num_train_steps = int(
+    num_train_steps = int(              
         train_example_num / batch_size * num_train_epochs)
-    num_warmup_steps = int(num_train_steps * warmup_proportion)
+    num_warmup_steps = int(num_train_steps * warmup_proportion) # 配置训练次数
     input_ids = tf.placeholder(dtype=tf.int32, shape=(None, 128))
     input_mask = tf.placeholder(dtype=tf.int32, shape=(None, 128))
     segment_ids = tf.placeholder(dtype=tf.int32, shape=(None, 128))
-    label_ids = tf.placeholder(dtype=tf.int32, shape=(None,))
+    label_ids = tf.placeholder(dtype=tf.int32, shape=(None,))   # 留四个占位符，用以输入数据和标签
     is_real_example = tf.ones(tf.shape(label_ids), dtype=tf.float32)
     is_training = True
-    num_labels = 2
+    num_labels = 2  # 二分类，共两个标签
     use_one_hot_embeddings = False
     (total_loss, per_example_loss, logits, probabilities) = create_model(
         bert_config, is_training, input_ids, input_mask, segment_ids, label_ids,
-        num_labels, use_one_hot_embeddings)
-    tvars = tf.trainable_variables()
+        num_labels, use_one_hot_embeddings) # 该函数生成BERT模型的计算图，并返回计算图的总损失、各样本损失、两个输出
+    tvars = tf.trainable_variables()    
     initialized_variable_names = {}
     scaffold_fn = None
 
     if init_checkpoint:
         (assignment_map, initialized_variable_names
          ) = modeling.get_assignment_map_from_checkpoint(tvars, init_checkpoint)
-        tf.train.init_from_checkpoint(init_checkpoint, assignment_map)
+        tf.train.init_from_checkpoint(init_checkpoint, assignment_map)  # 到这里为止根据检查点初始化计算图变量，相当于加载模型
     train_op = optimization.create_optimizer(
-        total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu)
+        total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu)  # 初始化优化器，用于梯度下降使用
     name_to_features = {
         "input_ids": tf.FixedLenFeature([seq_length], tf.int64),
         "input_mask": tf.FixedLenFeature([seq_length], tf.int64),
         "segment_ids": tf.FixedLenFeature([seq_length], tf.int64),
         "label_ids": tf.FixedLenFeature([], tf.int64),
         "is_real_example": tf.FixedLenFeature([], tf.int64),
-    }
+    }   # 生成输入数据所需的变量
     drop_remainder = False
 
     def _decode_record(record, name_to_features):
@@ -121,32 +121,32 @@ def main():
                 batch_size=batch_size,))
         return d
 
-    train_data = input_fn({"batch_size": batch_size})
-    iterator = train_data.make_one_shot_iterator().get_next()
+    train_data = input_fn({"batch_size": batch_size})   # 生成训练集
+    iterator = train_data.make_one_shot_iterator().get_next()   # 生成训练集数据迭代器，迭代器会在循环中输出数据
     if do_eval:
         input_file = data_root + "/dev.tf_record"
         dev_data = input_fn({"batch_size": batch_size})
-        dev_iterator = dev_data.make_one_shot_iterator().get_next()
+        dev_iterator = dev_data.make_one_shot_iterator().get_next() # 生成验证机迭代器
     val_accs = []
     sps = []
     sns = []
     if do_save_model:
-        saver = tf.train.Saver()
+        saver = tf.train.Saver()    # 生成存储节点
     with tf.Session(config=config) as sess:
         init = tf.global_variables_initializer()
-        sess.run(init)
+        sess.run(init)  # 初始化计算图
 
         for step in range(num_train_epochs):
             start_time = time.time()
             for _ in range(train_batch_num):
-                examples = sess.run(iterator)
+                examples = sess.run(iterator) # 运行迭代器生成样本
                 # print(examples)
                 _, loss = \
                     sess.run([train_op, total_loss],
                              feed_dict={input_ids: examples["input_ids"],
                                         input_mask: examples["input_mask"],
                                         segment_ids: examples["segment_ids"],
-                                        label_ids: examples["label_ids"]})
+                                        label_ids: examples["label_ids"]})  # 进行梯度下降，并取回loss值，喂入迭代器生成的数据
             print("step:", step, " loss:", round(loss, 4), end=" ")
             all_prob = []
             all_labels = []
@@ -176,14 +176,14 @@ def main():
             sn = c_mat[1, 1] / np.sum(c_mat[1, :])    # 预测正确的正样本
             sp = c_mat[0, 0] / np.sum(c_mat[0, :])    # 预测正确的负样本
             sps.append(sp)
-            sns.append(sn)
+            sns.append(sn)  # 计算各项性能指标
             end_time = time.time()
             eta_time = (end_time - start_time) * (num_train_epochs - step - 1)
             print("SE:", sn, " SP:", sp, " ACC:", acc, " MCC:", mcc, " auROC:", auc, " eta time:",
                   eta_time, "s")
 
         if do_save_model:
-            save_path = saver.save(sess, "./model/classifier_model/model.ckpt")
+            save_path = saver.save(sess, "./model/classifier_model/model.ckpt") # 存储模型
 
 
 main()
