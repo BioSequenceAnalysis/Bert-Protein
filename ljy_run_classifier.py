@@ -14,7 +14,7 @@ import time
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 
-def count_trues(pre_labels, true_labels):
+def count_trues(pre_labels, true_labels):   
     shape = true_labels.shape
     zeros = np.zeros(shape=shape)
     ones = np.ones(shape=shape)
@@ -28,27 +28,27 @@ def count_trues(pre_labels, true_labels):
 
 def main():
     # 以下是输入的参数，当更换词典时，请修改文件 bert_config.json中的vocab_size的值
-    do_eval = False
-    do_save_model = True
-    data_name = "all_data"
-    train_dict = {"AMPScan": 2132,
+    do_eval = False     # 是否在训练之后进行评估
+    do_save_model = True    # 是否存储训练的模型
+    data_name = "all_data"  # 选定数据名，用于导入对应的路径的数据
+    train_dict = {"AMPScan": 2132,  
                   "BiLSTM": 4174,
                   "iAMP": 1758,
                   "MAMPs": 5234,
                   "fold": 2928,
                   "all_data": 8978,
-                  }
+                  }     # 记录了各个训练集的样本数量
     test_dict = {"AMPScan": 1424,
                   "BiLSTM": 1156,
                   "iAMP": 1839,
                   "MAMPs": 1666,
                   "fold": 2119,
                   "all_data": 8978,
-                 }
+                 }  # 记录了各个测试集的样本数量
     tf.logging.set_verbosity(tf.logging.INFO)
-    train_example_num = train_dict[data_name]
-    test_example_num = test_dict[data_name]
-    batch_size = 32
+    train_example_num = train_dict[data_name]   # 获取训练集样本数量
+    test_example_num = test_dict[data_name]     # 获取测试集样本数量
+    batch_size = 32                             # batch的大小，如果gpu显存不够，可以考虑减小一下，尽量2的批次
     train_batch_num = math.ceil(train_example_num / batch_size)
     test_batch_num = math.ceil(test_example_num / batch_size)
     num_train_epochs = 50
