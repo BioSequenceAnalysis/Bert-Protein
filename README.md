@@ -24,7 +24,7 @@ Then you should uzip these zips and put them on the root of the project.
  
 You should ensure the content of file pre_train.sh
 >input_file is your input data for pre-training whose format is tf_record.  
-outout_dir is the dir of your output model.  
+output_dir is the dir of your output model.  
 bert_config_file defines the structure of the model.
 train_batch_size should be change more little if your computer don't support so big batch size.
 You can change the num_train_steps by yourself.
