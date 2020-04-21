@@ -49,14 +49,14 @@ def count_trues(pre_labels, true_labels):
 def main():
     # 以下是输入的参数，当更换词典时，请修改文件 bert_config.json中的vocab_size的值
     do_eval = FLAGS.do_eval     # 是否在训练之后进行评估
-    do_save_model = FLAGS.do_lower_case    # 是否存储训练的模型
+    do_save_model = FLAGS.do_save_model    # 是否存储训练的模型
     data_name = FLAGS.data_name  # 选定数据名，用于导入对应的路径的数据
     train_dict = {"AMPScan": 2132,
                   "BiLSTM": 4174,
                   "iAMP": 1758,
                   "MAMPs": 5234,
                   "fold": 2928,
-                  'Legionellapneumophilatmp':
+                  'Legionellapneumophilatmp': 998,
                   "all_data": 8978,
                   }     # 记录了各个训练集的样本数量
     test_dict = {"AMPScan": 1424,
@@ -64,6 +64,7 @@ def main():
                  "iAMP": 1839,
                  "MAMPs": 1666,
                  "fold": 2119,
+                 'Legionellapneumophilatmp': 128,
                  "all_data": 8978,
                  }  # 记录了各个测试集的样本数量
     tf.logging.set_verbosity(tf.logging.INFO)
