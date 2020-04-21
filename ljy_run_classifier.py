@@ -56,6 +56,7 @@ def main():
                   "iAMP": 1758,
                   "MAMPs": 5234,
                   "fold": 2928,
+                  'Legionellapneumophilatmp':
                   "all_data": 8978,
                   }     # 记录了各个训练集的样本数量
     test_dict = {"AMPScan": 1424,
