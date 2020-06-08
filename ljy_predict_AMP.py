@@ -1,4 +1,4 @@
-# coding:utf-8
+# CODing:utf-8
 
 import modeling
 import tokenization
@@ -14,10 +14,10 @@ from sklearn.metrics import matthews_corrcoef, roc_auc_score, accuracy_score, \
 import os
 import time
 import sys
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
-def fasta2record(input_file, output_file, vocab_file):
+def fasta2record(input_file, output_file, vocab_file, step=1):
     # This function gets an input_file which is .fasta
     # This function returns the numbers of sequences in input_file
     # This function will check if the input_file is right
@@ -39,9 +39,14 @@ def fasta2record(input_file, output_file, vocab_file):
         for line in lines:
             if line[0] != ">":
                 seq = ""
-                length = len(line.strip())
-                for i in range(length):
-                    seq += line[i] + " "
+                line= line.strip()
+                length = len(line)
+                # step = 1
+                for i in range(0, length, step):
+                    if length - i >= step:
+                        seq += line[i:i+step] + " "
+                    else:
+                        seq += line[i:] + " "
                 seq += "\n"
                 f.write("train\t1\t\t" + seq)
     processor = ColaProcessor()
@@ -55,14 +60,15 @@ def fasta2record(input_file, output_file, vocab_file):
     return seq_num
 
 
-def main(data_name, out_file="result.txt"):
+def main(data_name, out_file, model_path, step=1, config_file="./bert_config_1.json",
+         vocab_file="./vocab/vocab_1kmer.txt"):
     tf.logging.set_verbosity(tf.logging.INFO)
     batch_size = 32
     use_tpu = False
     seq_length = 128
-    vocab_file = "./vocab/vocab_1kmer.txt"
-    init_checkpoint = "./model/classifier_model/model.ckpt"
-    bert_config = modeling.BertConfig.from_json_file("./bert_config_1.json")
+    # vocab_file = "./vocab/vocab_2kmer.txt"
+    init_checkpoint = model_path
+    bert_config = modeling.BertConfig.from_json_file(config_file)
     learning_rate = 2e-5
     num_train_steps = 100
     num_warmup_steps = 10
@@ -70,7 +76,7 @@ def main(data_name, out_file="result.txt"):
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
     config.gpu_options.per_process_gpu_memory_fraction = 0.75
-    samples_num = fasta2record(data_name, "predict.tf_record", vocab_file)
+    samples_num = fasta2record(data_name, "predict.tf_record", vocab_file, step=step)
     batch_num = math.ceil(samples_num / batch_size)
     input_file = "predict.tf_record"
     tokenizer = tokenization.FullTokenizer(
@@ -148,9 +154,19 @@ def main(data_name, out_file="result.txt"):
             if line[0] == ">":
                 f.write(line)
             else:
-                f.write(line.strip() + str(all_prob[index]) + "\n")
+                f.write(line.strip() + " " + str(all_prob[index]) + "\n")
                 index += 1
 
 
 if __name__ == '__main__':
-    main(data_name=sys.argv[1], out_file=sys.argv[2])
+    # fold_num = "fold4"
+    # cate = "NAMP"
+    # main("dataset/Ori_dataset/" + fold_num + "/" + cate + "_te.fa",
+    #      "pre_result/" + fold_num + "_" + cate + "_result.txt",
+    #      "model/" + fold_num + "/model.ckpt")
+    main(data_name="dataset/Ori_dataset/AMPScan/NAMP_te.fa",
+         out_file="pre_result/AMPScan_NAMP_data_result.txt",
+         model_path="model/classifier_model/model2.ckpt",
+         step=2,
+         config_file="./bert_config_2.json",
+         vocab_file="./vocab/vocab_2kmer.txt")
