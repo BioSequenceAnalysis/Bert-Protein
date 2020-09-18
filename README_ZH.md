@@ -4,7 +4,7 @@
 # 开始使用
 克隆本仓库。
 ```
-git clone https://github.com/JianyuanLin/Bert-Protein
+git clone git@github.com:BioSequenceAnalysis/Bert-Protein.git
 ```
 从下面地址下载本项目所使用的模型。
 

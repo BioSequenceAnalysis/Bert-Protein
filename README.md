@@ -6,7 +6,7 @@ We train the model on 4 datasets and evaluate its performance.
 We merge all the datasets and train a model.
 # How to Start
 You should first clone the project by command
->git clone https://github.com/JianyuanLin/Bert-Protein
+>git clone git@github.com:BioSequenceAnalysis/Bert-Protein.git
 
 Then you need to download models and datasets from the address:
 >https://drive.google.com/open?id=1VSi-bdPpT0Z1ytmhVxbHGGjZDtQNLjm6
