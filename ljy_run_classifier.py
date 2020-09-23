@@ -58,6 +58,7 @@ def main():
                   "fold": 2928,
                   'Legionellapneumophilatmp': 998,
                   "all_data": 8978,
+                  "data_10": 439,
                   }     # 记录了各个训练集的样本数量
     test_dict = {"AMPScan": 1424,
                  "BiLSTM": 1156,
@@ -66,6 +67,7 @@ def main():
                  "fold": 2119,
                  'Legionellapneumophilatmp': 128,
                  "all_data": 8978,
+                 "data_10": 65,
                  }  # 记录了各个测试集的样本数量
     tf.logging.set_verbosity(tf.logging.INFO)
     train_example_num = train_dict[data_name]   # 获取训练集样本数量

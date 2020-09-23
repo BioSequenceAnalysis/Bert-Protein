@@ -4,7 +4,7 @@ from run_classifier import ColaProcessor
 import tokenization
 from run_classifier import file_based_convert_examples_to_features
 
-data_name = "Legionellapneumophilatmp"
+data_name = "data_10"
 input_root = "./dataset/1kmer_tsv_data/"
 output_root = "./dataset/1kmer_tfrecord/"
 vocab_file = "./vocab/vocab_1kmer.txt"
