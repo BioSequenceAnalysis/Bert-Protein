@@ -12,7 +12,7 @@ We merge all the datasets and train a comprehensive prediction model.
 You should first clone the project by command
 
 ```
-git clone https://github.com/BioSequenceAnalysis/Bert-Protein.git
+git clone git@github.com:BioSequenceAnalysis/Bert-Protein.git
 ```
 
 Then you need to download models and datasets from the address:
