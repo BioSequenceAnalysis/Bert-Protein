@@ -17,9 +17,9 @@ git clone git@github.com:BioSequenceAnalysis/Bert-Protein.git
 
 Then you need to download models and datasets from the address:
 
->https://pan.baidu.com/s/193yK486TRcbeaENv-CXnaA
+>https://pan.baidu.com/s/1-tV9oWPhL0wuMxGWXQAW4A 
 
-The password is 2aje
+The password is jvfb 
 
 Then you should unzip these zips and put them on the root of the project.
  # Pre-training
