@@ -24,6 +24,14 @@ The password is a1yi
 Then you should unzip these zips and put them on the root of the project.
  # Pre-training
 
+ ## Data Format
+Before you create data, you should make sure the input file is properly formatted(just like this).
+```
+train 0   SEQUENCE
+```
+We also provide a sample code(fasta2tsv.py) for using the transformation format (which may require you to change something to suit your needs).
+ ## Create tfrecord file
+
  You should create data for pre-train by the command
 
 ```sh create_data.sh```
